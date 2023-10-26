@@ -1,12 +1,16 @@
+'use client';
 import Link from "next/link"
 import { signIn, signOut, useSession } from "next-auth/react"
 import styles from "./header.module.css"
+import {useEffect, useState} from "react";
+import {createRegistrationUrl} from "../utils";
 
 // The approach used in this component shows how to build a sign in and sign out
 // component that works on pages which support both client and server side
 // rendering, and avoids any flash incorrect content on initial page load.
 export default function Header() {
   const { data: session, status } = useSession()
+
   const loading = status === "loading"
 
   return (
@@ -30,10 +34,16 @@ export default function Header() {
                 className={styles.buttonPrimary}
                 onClick={(e) => {
                   e.preventDefault()
-                  signIn()
+                  signIn('keycloak', {callbackUrl: '/'})
                 }}
               >
                 Sign in
+              </a>
+              <a
+                  href={createRegistrationUrl(`${process.env.NEXTAUTH_URL}/auth/signup/callback?type=post_register&redirect_uri=/`)}
+                  className={styles.buttonPrimary}
+              >
+                Register
               </a>
             </>
           )}
